@@ -6,6 +6,8 @@ Cada entrada debe indicar ID, estado, decisión o pregunta, fuente y siguiente a
 
 Las aprobaciones iniciales de este documento proceden del encargo del usuario para esta tarea. Son directrices de trabajo, no constancias de aprobación de las profesoras. Las propuestas de estos documentos siguen siendo propuestas aunque el PR documental sea aceptado, salvo acuerdo explícito registrado. Para sustituir una decisión, conservar la anterior y enlazar su reemplazo y motivo.
 
+La [revisión del PR #1](https://github.com/maorusohh/soporte-redes-unefa/pull/1#pullrequestreview-5914173968) recoge requisitos «informados por integrante del equipo». Se registran como **reportados y pendientes de verificación**, no como decisiones aprobadas ni como requisitos confirmados documentalmente por las docentes. Su detalle e IDs `REP-TP-...` y `REP-BD-...` están en [01-REQUISITOS.md](01-REQUISITOS.md). La mención de creatividad en pagos es condicional a sistemas con pagos y no incorpora una obligación general ni una funcionalidad de pagos al proyecto.
+
 ## Directrices aprobadas para esta tarea
 
 Fuente de todas las entradas de esta tabla: encargo del usuario de preparar la estructura documental inicial, registrado como `DOC-001` en el [plan](04-PLAN-DE-TRABAJO.md). No consta una fecha de aprobación académica.
@@ -31,7 +33,7 @@ Fuente de todas las entradas de esta tabla: encargo del usuario de preparar la e
 
 | ID | Estado | Asunto | Evidencia o acuerdo necesario |
 | --- | --- | --- | --- |
-| DEC-10 | Pendiente | Requisitos específicos de ambas profesoras, rúbricas y alcance mínimo. | Consignas o confirmaciones registradas por asignatura y criterios de aceptación. |
+| DEC-10 | Pendiente | Verificar los requisitos reportados de ambas asignaturas y acordar el alcance mínimo. | Contrastar `REP-TP-...` y `REP-BD-...` de 01-REQUISITOS.md con consignas, rúbricas o confirmaciones documentales de las docentes; registrar diferencias y criterios de aceptación. El reporte del equipo no resuelve este pendiente. |
 | DEC-11 | Pendiente | Stack tecnológico, tipo de cliente y protocolo de aplicación sobre TCP/IP. | Comparación justificada según requisitos y recursos; acuerdo explícito del grupo. |
 | DEC-12 | Pendiente | Modelo y motor de base de datos, reglas de integridad y concurrencia. | Requisitos de la asignatura y revisión del diseño. |
 | DEC-13 | Pendiente | Mecanismo, métricas y frecuencia de monitoreo; autenticación, permisos y tratamiento de desconexiones. | Alcance funcional aceptado y evaluación de seguridad y viabilidad. |

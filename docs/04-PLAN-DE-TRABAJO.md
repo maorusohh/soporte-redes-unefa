@@ -17,19 +17,19 @@ Los roles del equipo no definen roles de usuarios de la aplicación. Ninguna per
 
 ## Tarea documental inicial: DOC-001
 
-- **Fuente:** encargo del usuario de preparar la estructura documental y organizativa inicial del proyecto.
+- **Fuente:** encargo del usuario de preparar la estructura documental y organizativa inicial del proyecto; seguimiento de las observaciones de la [revisión del PR #1](https://github.com/maorusohh/soporte-redes-unefa/pull/1#pullrequestreview-5914173968), solicitado por el usuario.
 - **Objetivo:** crear AGENTS.md, CONTRIBUTING.md y los cinco documentos numerados de `docs/`, conservando el README.
-- **Alcance:** instrucciones de trabajo, colaboración, requisitos por estado, arquitectura conceptual, decisiones, plan y demostración LAN preliminar.
+- **Alcance:** instrucciones de trabajo, colaboración, requisitos por estado, arquitectura conceptual, decisiones, plan y demostración LAN preliminar. Incluye la corrección documental solicitada: registrar los requisitos reportados por el equipo, separados de los confirmados documentalmente por las docentes, y mantener coherentes requisitos, decisiones y plan.
 - **Fuera de alcance:** implementación, elección de stack definitivo, pruebas funcionales y merge del PR.
 - **Branch y destino:** `docs/project-foundation` hacia `main`.
-- **Responsables individuales y revisor:** pendientes de asignación por el grupo; no se atribuye revisión a ningún integrante.
-- **Estado:** documentación preparada para revisión; la apertura del PR y la revisión humana se comprueban en GitHub, no se dan por realizadas aquí.
+- **Responsables individuales y revisor del grupo:** pendientes de asignación. La revisión publicada bajo la cuenta `maorusohh` en GitHub es la fuente de estas observaciones; no se presume con ello una revisión de otro integrante ni una aprobación académica.
+- **Estado:** [PR #1](https://github.com/maorusohh/soporte-redes-unefa/pull/1) abierto hacia `main`, con observaciones documentales recibidas y correcciones preparadas para su revisión. No implica aprobación del grupo ni autoriza el merge.
 
 Criterios de aceptación para revisar en el PR:
 
 - Existen los siete archivos solicitados y el README no cambia.
-- Se distinguen requisitos académicos confirmados, funcionalidades propuestas y decisiones pendientes, con sus fuentes disponibles.
-- No se afirman asignaciones, tecnologías, requisitos de las profesoras ni pruebas inexistentes.
+- Se distinguen requisitos académicos confirmados documentalmente, requisitos reportados por el equipo pendientes de verificación oficial, funcionalidades propuestas y decisiones pendientes, con sus fuentes disponibles.
+- No se afirman asignaciones, tecnologías, confirmaciones de las profesoras ni pruebas inexistentes. Los requisitos reportados conservan su fuente y estado; pagos no se presenta como obligación general.
 - Se mantiene febrero de 2027 como previsión pendiente de confirmación formal.
 - Se explicitan pertenencia académica compartida, tareas verificables y pruebas de red únicamente sobre recursos autorizados.
 - Los enlaces internos resuelven y el contenido es coherente entre documentos.
@@ -44,7 +44,7 @@ La presentación final se prevé para **febrero de 2027**, pendiente de confirma
 | Hito | Entregables propuestos | Criterio de salida | Dependencia |
 | --- | --- | --- | --- |
 | H0. Base documental | Los siete documentos de DOC-001 y PR de revisión. | Criterios documentales comprobados y revisión del grupo. | Encargo actual; no exige código. |
-| H1. Requisitos y organización | Consignas de ambas profesoras, alcance mínimo, criterios y asignación de personas. | Requisitos con evidencia y decisiones pendientes identificadas o resueltas. | H0 y consulta académica. |
+| H1. Requisitos y organización | Contraste de `REP-TP-...` y `REP-BD-...` con las consignas de ambas profesoras; alcance mínimo, criterios y asignación de personas. | Fuentes y diferencias documentadas, distinción entre reportado y confirmado por las docentes, y decisiones pendientes identificadas o resueltas. | H0 y consulta académica. |
 | H2. Diseño acordado | Comparación de stack, contrato de comunicación, modelo de datos y guion mínimo. | Acuerdos explícitos registrados y tareas de implementación verificables. | H1. |
 | H3. Primera integración | Un flujo mínimo autorizado entre cliente, servidor y persistencia según el diseño aprobado. | Flujo realmente ejecutado con evidencia; alcance exacto por acordar en su tarea. | H2; requiere autorización de implementación posterior. |
 | H4. Incrementos funcionales | Funciones priorizadas y monitoreo autorizado según requisitos aceptados. | Criterios de cada tarea comprobados e integración revisada. | H3 y tareas acordadas. |
@@ -52,6 +52,8 @@ La presentación final se prevé para **febrero de 2027**, pendiente de confirma
 | H6. Presentación | Versión revisada, documentación y evidencias acordes con ambas consignas. | Fecha y formato formalmente confirmados; preparación validada por el grupo. | H5 y confirmación académica. |
 
 Estos hitos orientan la planificación; las modificaciones futuras requieren sus propias Issues o tareas documentadas antes de iniciarse. No autorizan por sí solos desarrollar todas las funcionalidades.
+
+Para el futuro informe de Teleprocesos, H1 deberá contrastar el título y delimitación, la introducción y planteamiento sin diagnóstico con progresión macro–meso–micro en párrafos continuos, el objetivo general, los tres específicos y la justificación, además del marco teórico/conceptual, propuesta de solución, pruebas y resultados, conclusiones y recomendaciones (`REP-TP-02` a `REP-TP-05`). Los apartados de pruebas y resultados solo podrán completarse con evidencia real cuando existan implementación y ensayos autorizados. En Sistemas Avanzados de Bases de Datos se contrastarán los nueve requisitos `REP-BD-01` a `REP-BD-09`, incluido el diccionario de datos. Esta planificación no los convierte en requisitos confirmados ni aprueba su implementación.
 
 ## Estrategia de integración propuesta
 
@@ -64,4 +66,4 @@ Estos hitos orientan la planificación; las modificaciones futuras requieren sus
 
 ## Siguientes tareas por acordar
 
-Recabar consignas, asignar integrantes, confirmar fecha y recursos, y evaluar alternativas técnicas. Son asuntos identificados, no Issues creadas ni tareas de implementación aprobadas. Al priorizarlos, registrar cada tarea según CONTRIBUTING.md y enlazar los IDs del [registro de decisiones](03-DECISIONES.md).
+Recabar consignas y contrastar los requisitos reportados de ambas asignaturas; asignar integrantes, confirmar fecha y recursos, y evaluar alternativas técnicas. Son asuntos identificados, no Issues creadas ni tareas de implementación aprobadas. Al priorizarlos, registrar cada tarea según CONTRIBUTING.md y enlazar los IDs del [registro de decisiones](03-DECISIONES.md).
