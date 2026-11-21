@@ -56,21 +56,21 @@ def test_malformed_hash_rejected_without_crashing():
 
 
 def test_email_is_normalized_and_invalid_email_rejected():
-    request = LoginRequest(email="ADMIN@laboratorio.test", password="clave-laboratorio")
-    assert request.email == "admin@laboratorio.test"
+    request = LoginRequest(email="ADMIN@example.com", password="clave-laboratorio")
+    assert request.email == "admin@example.com"
     with pytest.raises(ValidationError):
         LoginRequest(email="invalido", password="clave-laboratorio")
 
 
 def test_roles_public_data_and_reset_contract():
     public = PublicUser(
-        id=uuid4(), email="USER@laboratorio.test", role=UserRole.USER, active=True
+        id=uuid4(), email="USER@example.com", role=UserRole.USER, active=True
     )
-    assert public.email == "user@laboratorio.test"
-    assert CreateUserRequest(email="user@laboratorio.test").role == UserRole.USER
+    assert public.email == "user@example.com"
+    assert CreateUserRequest(email="user@example.com").role == UserRole.USER
     with pytest.raises(ValidationError):
-        PublicUser(id=uuid4(), email="user@laboratorio.test", role="SUPERADMIN", active=True)
+        PublicUser(id=uuid4(), email="user@example.com", role="SUPERADMIN", active=True)
     with pytest.raises(ValidationError):
         ResetPasswordRequest(
-            email="user@laboratorio.test", code="123", new_password="nueva-clave-segura"
+            email="user@example.com", code="123", new_password="nueva-clave-segura"
         )
