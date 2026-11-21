@@ -15,14 +15,14 @@ Respuestas JSON y nombres de campos en inglés; interfaz y mensajes legibles en 
 
 | Método | Ruta | Request JSON | Éxito / respuesta esperada | Quién |
 | --- | --- | --- | --- | --- |
-| POST | /auth/login | `{"email":"user@laboratorio.test","password":"<secreto>"}` | 200 `{"user":{"id":"...","email":"...","role":"USER"}}` + cookie de sesión HttpOnly | Público |
+| POST | /auth/login | `{"email":"user@example.com","password":"<secreto>"}` | 200 `{"user":{"id":"...","email":"...","role":"USER"}}` + cookie de sesión HttpOnly | Público |
 | GET | /auth/me | — | 200 `{"user":{"id":"...","email":"...","role":"ADMIN"}}` | Sesión válida |
 | POST | /auth/logout | — | 204; cookie e identificador de sesión revocados | Sesión válida |
 | POST | /auth/change-password | `{"current_password":"...","new_password":"..."}` | 204 y revocación de sesiones anteriores | Sesión válida |
-| POST | /auth/forgot-password | `{"email":"user@laboratorio.test"}` | 202 con respuesta genérica, haya o no cuenta; **no envía correos** | Público |
-| POST | /auth/reset-password | `{"email":"user@laboratorio.test","code":"...","new_password":"..."}` | 204 cuando código autorizado es válido, no consumido ni expirado | Código supervisado |
+| POST | /auth/forgot-password | `{"email":"user@example.com"}` | 202 con respuesta genérica, haya o no cuenta; **no envía correos** | Público |
+| POST | /auth/reset-password | `{"email":"user@example.com","code":"...","new_password":"..."}` | 204 cuando código autorizado es válido, no consumido ni expirado | Código supervisado |
 | GET | /admin/users | — | 200 `{"users":[{"id":"...","email":"...","role":"USER","active":true}]}` | ADMIN |
-| POST | /admin/users | `{"email":"user@laboratorio.test","role":"USER"}` | 201 `{"user":{...}}`; contraseña inicial se configura por activación/código | ADMIN |
+| POST | /admin/users | `{"email":"user@example.com","role":"USER"}` | 201 `{"user":{...}}`; contraseña inicial se configura por activación/código | ADMIN |
 | POST | /admin/password-resets | `{"user_id":"..."}` | 201 con código temporal visible **solo al ADMIN**, una vez; se entrega fuera de la API pública | ADMIN |
 
 Nota: `/api/v1` precede todas las rutas de la tabla. La estructura de errores usa `{"detail":"mensaje sin secretos"}`; sesión ausente o inválida → **401**, sesión válida sin privilegios → **403**, validación → **422**. No revelar si una dirección de correo existe en login/recuperación. Se acuerda identificador `id` opaco (UUID propuesto) y `role` limitado a `ADMIN` o `USER` en P0.
