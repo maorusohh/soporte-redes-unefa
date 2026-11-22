@@ -218,3 +218,5 @@ Las capturas y el mock no sustituyen la prueba con el Backend real. El mock no s
 ## Autoría y alcance
 
 Este prototipo se preparó en la rama `feat/auth-frontend-p0`. No se modificaron archivos de Backend, Base de Datos ni QA. La autoría real queda registrada en los commits y en el PR #15; no se atribuye revisión ni aprobación a integrantes que no hayan participado.
+
+Los commits creados antes del cambio de identidad local conservan su autoría original; los posteriores figuran como `jbrkll007 <jbrkll007@gmail.com>`. No se reescribió la historia ya publicada para no usar force push.
