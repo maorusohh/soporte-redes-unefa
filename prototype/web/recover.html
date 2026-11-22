@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Recuperación de contraseña | Soporte técnico UNEFANB</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+
+  <header class="site-header">
+    <div class="brand">
+      Soporte técnico y monitoreo
+      <small>Prototipo FRONT-002 · datos ficticios</small>
+    </div>
+    <nav class="site-nav" aria-label="Pantallas del prototipo">
+      <a href="login.html">Acceso</a>
+      <a href="recover.html" aria-current="page">Recuperación</a>
+      <a href="session.html">Sesión</a>
+      <a href="change-password.html">Cambio de contraseña</a>
+    </nav>
+  </header>
+
+  <main id="contenido" class="page page--narrow">
+    <section class="card" aria-labelledby="recover-title">
+      <p class="eyebrow">Recuperación supervisada</p>
+      <h1 id="recover-title">Olvidé mi contraseña</h1>
+      <p>La recuperación es asistida por un administrador autorizado. El sistema <strong>no envía correos electrónicos</strong> ni inicia sesión automáticamente después del cambio.</p>
+
+      <p class="notice" data-kind="warning">
+        Contacta al administrador por el canal acordado. Él verificará tu identidad fuera del sistema y te entregará un código temporal de un solo uso.
+      </p>
+
+      <form id="forgot-form" method="post">
+        <fieldset>
+          <legend>Paso 1. Solicitar ayuda</legend>
+          <p class="hint">La respuesta es genérica y no revela si el correo está registrado.</p>
+
+          <div class="field">
+            <label for="forgot-email">Correo electrónico</label>
+            <input id="forgot-email" name="email" type="email" autocomplete="username" inputmode="email"
+                   maxlength="254" placeholder="usuario@example.com" required>
+          </div>
+
+          <p id="forgot-status" class="notice" role="status" hidden></p>
+          <p id="forgot-error" class="notice" role="alert" hidden></p>
+
+          <div class="button-row">
+            <button id="forgot-submit" class="button" type="submit">Solicitar ayuda</button>
+          </div>
+        </fieldset>
+      </form>
+
+      <section id="reset-success" hidden aria-labelledby="reset-success-title">
+        <h2 id="reset-success-title" tabindex="-1">Contraseña actualizada</h2>
+        <p class="notice" data-kind="success">El servidor confirmó el cambio. Por seguridad, no se abrió una sesión automática.</p>
+        <p class="button-row">
+          <a class="button" href="login.html?notice=reset-success">Ir al acceso</a>
+        </p>
+      </section>
+
+      <form id="reset-form" method="post">
+        <fieldset>
+          <legend>Paso 2. Usar el código temporal</legend>
+          <p class="hint">Introduce el código cuando el administrador te lo entregue. No se envía por correo desde esta aplicación.</p>
+
+          <div class="field">
+            <label for="reset-email">Correo electrónico</label>
+            <input id="reset-email" name="email" type="email" autocomplete="username" inputmode="email"
+                   maxlength="254" placeholder="usuario@example.com" required>
+          </div>
+
+          <div class="field">
+            <label for="reset-code">Código temporal</label>
+            <input id="reset-code" name="code" type="text" autocomplete="one-time-code"
+                   autocapitalize="none" spellcheck="false" maxlength="128" required>
+            <p class="hint">Código de un solo uso. No lo compartas ni lo guardes en el repositorio.</p>
+          </div>
+
+          <div class="field">
+            <label for="new-password">Nueva contraseña</label>
+            <input id="new-password" name="new_password" type="password" autocomplete="new-password" required>
+            <p class="hint">La política definitiva de contraseña la valida el servidor.</p>
+          </div>
+
+          <div class="field">
+            <label for="confirm-password">Confirmar nueva contraseña</label>
+            <input id="confirm-password" name="confirm_password" type="password" autocomplete="new-password" required>
+          </div>
+
+          <p id="reset-status" class="notice" role="status" hidden></p>
+          <p id="reset-error" class="notice" role="alert" hidden></p>
+
+          <div class="button-row">
+            <button id="reset-submit" class="button" type="submit">Guardar nueva contraseña</button>
+          </div>
+        </fieldset>
+      </form>
+
+      <p class="helper"><a href="login.html">Volver al acceso</a></p>
+
+      <noscript>
+        <p class="notice" data-kind="warning" role="alert">
+          Esta pantalla necesita JavaScript para comunicarse con la API. Actívalo para continuar.
+        </p>
+      </noscript>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Prototipo académico. No se envían correos ni se usan servicios externos. Emplea únicamente datos ficticios.</p>
+  </footer>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/recover.js"></script>
+</body>
+</html>

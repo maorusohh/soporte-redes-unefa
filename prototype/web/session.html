@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Sesión | Soporte técnico UNEFANB</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+
+  <header class="site-header">
+    <div class="brand">
+      Soporte técnico y monitoreo
+      <small>Prototipo FRONT-002 · datos ficticios</small>
+    </div>
+    <nav class="site-nav" aria-label="Pantallas del prototipo">
+      <a href="login.html">Acceso</a>
+      <a href="recover.html">Recuperación</a>
+      <a href="session.html" aria-current="page">Sesión</a>
+      <a href="change-password.html">Cambio de contraseña</a>
+    </nav>
+  </header>
+
+  <main id="contenido" class="page page--narrow">
+    <section id="session-loading" class="card" aria-live="polite">
+      <p class="eyebrow">Sesión</p>
+      <h1>Verificando sesión…</h1>
+      <p class="muted">Consultando <code>GET /api/v1/auth/me</code>.</p>
+    </section>
+
+    <section id="session-guest" class="card" hidden aria-labelledby="guest-title">
+      <p class="eyebrow">Sesión</p>
+      <h1 id="guest-title" tabindex="-1">No hay una sesión activa</h1>
+      <p>Esta pantalla solo muestra datos cuando el servidor confirma una sesión válida. No se simula un usuario.</p>
+      <p class="button-row">
+        <a class="button" href="login.html?notice=session-required">Ir al acceso</a>
+      </p>
+    </section>
+
+    <section id="session-error" class="card" hidden aria-labelledby="session-error-title">
+      <p class="eyebrow">Sesión</p>
+      <h1 id="session-error-title" tabindex="-1">No se pudo verificar la sesión</h1>
+      <p id="session-error-message" class="notice" role="alert"></p>
+      <p class="button-row">
+        <button id="session-retry" class="button" type="button">Reintentar</button>
+        <a class="button button--secondary" href="login.html">Volver al acceso</a>
+      </p>
+    </section>
+
+    <section id="session-content" class="card" hidden aria-labelledby="session-title">
+      <p class="eyebrow">Sesión activa</p>
+      <h1 id="session-title" tabindex="-1">Tu sesión</h1>
+      <p class="muted">Datos devueltos por el servidor para la cookie de sesión actual.</p>
+
+      <dl class="session-data">
+        <dt>Correo</dt>
+        <dd id="session-email">—</dd>
+        <dt>Rol</dt>
+        <dd><span id="session-role" class="badge">—</span></dd>
+      </dl>
+
+      <p id="role-note" class="hint"></p>
+
+      <div class="button-row">
+        <a class="button button--secondary" href="change-password.html">Cambiar contraseña</a>
+        <button id="logout-button" class="button button--danger" type="button">Cerrar sesión</button>
+      </div>
+      <p id="logout-status" class="notice" role="alert" hidden></p>
+    </section>
+
+    <section id="admin-users-section" class="card" hidden aria-labelledby="admin-users-title">
+      <p class="eyebrow">Solo ADMIN</p>
+      <h2 id="admin-users-title">Usuarios autorizados</h2>
+      <p class="muted">Esta consulta usa <code>GET /api/v1/admin/users</code>. Si un USER intentara llamar a la ruta directamente, el Backend debe responder 403.</p>
+      <p class="button-row">
+        <button id="admin-users-load" class="button button--secondary" type="button">Consultar usuarios</button>
+      </p>
+      <p id="admin-users-status" class="notice" role="status" hidden></p>
+      <p id="admin-users-error" class="notice" role="alert" hidden></p>
+
+      <div id="admin-users-table-wrap" class="table-wrap" hidden>
+        <table aria-describedby="admin-users-caption">
+          <caption id="admin-users-caption" class="sr-only">Usuarios devueltos por la API administrativa</caption>
+          <thead>
+            <tr>
+              <th scope="col">Correo</th>
+              <th scope="col">Rol</th>
+              <th scope="col">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="admin-users-rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Prototipo académico. Los permisos reales se verifican en Backend. No uses datos personales ni credenciales reales en esta etapa.</p>
+  </footer>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/session.js"></script>
+</body>
+</html>
