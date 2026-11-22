@@ -181,6 +181,7 @@ Se registran aquí únicamente comprobaciones realizadas.
 | --- | --- | --- | --- |
 | 22/11/2026 | Instalación de dependencias | `npm ci` | OK; instalación reproducible con lockfile, sin fallos |
 | 22/11/2026 | Build de producción | `npm run build` | OK; Vite 8.3.8, 35 módulos; JS ~283 KB (88 KB gzip), CSS ~5,5 KB (1,9 KB gzip) |
+| 22/11/2026 | Cliente API con `fetch` simulado | Node + 10 comprobaciones de rutas, métodos, cuerpo JSON, 401, 403, 404, 422 y error de red | OK |
 | 22/11/2026 | Rutas de la SPA servidas desde `dist` | Servidor Node temporal con fallback a `index.html` | HTTP 200 en `/login`, `/recover`, `/session`, `/change-password` |
 | 22/11/2026 | Navegación y estados de error sin API | Playwright + Chromium headless sobre build de producción | OK; formularios, avisos, navegación activa y almacenamiento vacío; sin errores de página |
 | 22/11/2026 | Flujos contra un mock Node del contrato | Playwright: login USER/ADMIN, `/auth/me`, 403 de USER en `/admin/users`, lista ADMIN, logout, cambio de contraseña, contraseña anterior rechazada, recuperación, código inválido y reutilizado | OK; **no es integración real con Backend** |
