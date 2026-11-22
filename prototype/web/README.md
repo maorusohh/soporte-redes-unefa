@@ -8,14 +8,14 @@ Pantallas de acceso, sesión, recuperación y cambio de contraseña para la revi
 - **Implementado:** SPA con rutas `/login`, `/session`, `/recover` y `/change-password`; estados de carga, errores, navegación, cierre de sesión, cambio y recuperación de contraseña.
 - **No implementado:** autenticación real, endpoints de FastAPI, esquema PostgreSQL, CSRF definitivo y pruebas funcionales completas.
 - **No verificado:** login exitoso contra Backend. El PR de Backend (#14) contiene modelos y utilidades de seguridad, pero todavía no expone `/auth/login`.
-- **Publicación:** los commits están en la rama local `feat/auth-frontend-p0`. El push a `origin` fue rechazado con 403 porque la cuenta usada tiene permiso de lectura pero no de escritura. No se abrió PR.
+- **Publicación:** la rama `feat/auth-frontend-p0` se publica en `origin` por SSH desde la cuenta `jbrkll007`; el PR Draft se abre hacia `integration/auth-p0` y se enlaza desde la Issue #10.
 - **Regla respetada:** no hay usuarios, contraseñas ni sesiones simuladas en el código de la aplicación. Si la API no está disponible, la interfaz muestra un error honesto.
 
-La Issue #10 está asignada a Joiber (`jbrkll007`), responsable de Frontend. Este trabajo debe ser revisado por esa área antes de considerarse terminado o fusionarse.
+La Issue #10 está asignada a Joiber (`jbrkll007`), responsable de Frontend. La rama se publica desde esa cuenta y requiere revisión de otro integrante antes de fusionarse.
 
 ## Decisión de stack: Vite + React
 
-La Issue #10 permite proponer una librería o framework, pero exige explicar cuatro puntos antes de añadirlo y que la coordinación fije la decisión con el equipo. Esta implementación se preparó con **Vite + React** por solicitud directa para esta rama. **No se afirma que la coordinación ya haya aprobado formalmente el cambio**; queda pendiente registrarlo en la Issue. GitHub respondió sin permiso de escritura, así que no se pudo comentar allí.
+La Issue #10 permite proponer una librería o framework, pero exige explicar cuatro puntos antes de añadirlo y que la coordinación fije la decisión con el equipo. Esta implementación se preparó con **Vite + React** por solicitud directa para esta rama. **No se afirma que la coordinación ya haya aprobado formalmente el cambio**; la propuesta se documenta aquí y debe registrarse en la Issue #10 antes de fusionar.
 
 | Punto exigido | Respuesta para este prototipo |
 | --- | --- |
@@ -198,8 +198,8 @@ Las capturas y el mock no sustituyen la prueba con el Backend real. El mock no s
 4. Revisar la política de contraseñas y los códigos de error reales para ajustar los mensajes sin revelar información.
 5. Ejecutar pruebas funcionales reales con ADMIN y USER ficticios, logout, expiración, 403 y recuperación de un solo uso.
 6. Reemplazar las capturas con mock por capturas contra el Backend real cuando esté disponible.
-7. Revisión de Joiber (Frontend) y del equipo antes de fusionar el PR.
-8. Publicar la rama: requiere un colaborador con permiso de escritura o autorización de la cuenta usada.
+7. Revisión de otro integrante y del equipo antes de fusionar el PR.
+8. Mantener actualizado el PR Draft y no fusionar hasta cumplir los pendientes anteriores.
 
 ## Registro del proceso
 
@@ -211,8 +211,8 @@ Las capturas y el mock no sustituyen la prueba con el Backend real. El mock no s
 6. Se validó la interfaz con Playwright y Chromium headless; se usó un servidor Node temporal con respuestas del contrato para probar los flujos, sin versionarlo.
 7. Se generaron capturas nuevas y se marcaron las que dependen del mock como simuladas.
 8. No se modificaron Backend, Base de Datos ni QA. No se hizo merge ni push a `main`.
-9. Se intentó publicar la rama en `origin`. GitHub respondió **403**: la cuenta usada tiene `pull: true` y `push: false` sobre el repositorio. No se abrió Pull Request.
-10. La revisión funcional real queda pendiente de AUTH-001, de la aprobación del stack y de la revisión humana del área de Frontend.
+9. El push inicial falló con **403** porque la sesión activa de `gh` era `KingPandX`, sin permiso de escritura. Se cambió la sesión a `jbrkll007`, se generó una clave SSH específica para esa cuenta, se agregó a GitHub y se configuró `core.sshCommand` en el repositorio local. El push por SSH funcionó.
+10. La revisión funcional real queda pendiente de AUTH-001, de la aprobación del stack y de la revisión de otro integrante.
 
 ## Autoría y alcance
 
