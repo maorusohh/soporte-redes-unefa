@@ -8,14 +8,14 @@ Pantallas de acceso, sesión, recuperación y cambio de contraseña para la revi
 - **Implementado:** SPA con rutas `/login`, `/session`, `/recover` y `/change-password`; estados de carga, errores, navegación, cierre de sesión, cambio y recuperación de contraseña.
 - **No implementado:** autenticación real, endpoints de FastAPI, esquema PostgreSQL, CSRF definitivo y pruebas funcionales completas.
 - **No verificado:** login exitoso contra Backend. El PR de Backend (#14) contiene modelos y utilidades de seguridad, pero todavía no expone `/auth/login`.
-- **Publicación:** la rama `feat/auth-frontend-p0` se publica en `origin` por SSH desde la cuenta `jbrkll007`; el PR Draft se abre hacia `integration/auth-p0` y se enlaza desde la Issue #10.
+- **Publicación:** la rama `feat/auth-frontend-p0` se publica en `origin` por SSH desde la cuenta `jbrkll007`; el PR Draft [#15](https://github.com/maorusohh/soporte-redes-unefa/pull/15) se abre hacia `integration/auth-p0` y se enlaza desde la Issue #10.
 - **Regla respetada:** no hay usuarios, contraseñas ni sesiones simuladas en el código de la aplicación. Si la API no está disponible, la interfaz muestra un error honesto.
 
 La Issue #10 está asignada a Joiber (`jbrkll007`), responsable de Frontend. La rama se publica desde esa cuenta y requiere revisión de otro integrante antes de fusionarse.
 
 ## Decisión de stack: Vite + React
 
-La Issue #10 permite proponer una librería o framework, pero exige explicar cuatro puntos antes de añadirlo y que la coordinación fije la decisión con el equipo. Esta implementación se preparó con **Vite + React** por solicitud directa para esta rama. **No se afirma que la coordinación ya haya aprobado formalmente el cambio**; la propuesta se documenta aquí y debe registrarse en la Issue #10 antes de fusionar.
+La Issue #10 permite proponer una librería o framework, pero exige explicar cuatro puntos antes de añadirlo y que la coordinación fije la decisión con el equipo. Esta implementación se preparó con **Vite + React** por solicitud directa para esta rama. **No se afirma que la coordinación ya haya aprobado formalmente el cambio**; la propuesta se documenta aquí y debe registrarse en la Issue #10 y en el PR #15 antes de fusionar.
 
 | Punto exigido | Respuesta para este prototipo |
 | --- | --- |
@@ -199,7 +199,7 @@ Las capturas y el mock no sustituyen la prueba con el Backend real. El mock no s
 5. Ejecutar pruebas funcionales reales con ADMIN y USER ficticios, logout, expiración, 403 y recuperación de un solo uso.
 6. Reemplazar las capturas con mock por capturas contra el Backend real cuando esté disponible.
 7. Revisión de otro integrante y del equipo antes de fusionar el PR.
-8. Mantener actualizado el PR Draft y no fusionar hasta cumplir los pendientes anteriores.
+8. Mantener actualizado el PR Draft #15 y no fusionar hasta cumplir los pendientes anteriores.
 
 ## Registro del proceso
 
@@ -213,7 +213,8 @@ Las capturas y el mock no sustituyen la prueba con el Backend real. El mock no s
 8. No se modificaron Backend, Base de Datos ni QA. No se hizo merge ni push a `main`.
 9. El push inicial falló con **403** porque la sesión activa de `gh` era `KingPandX`, sin permiso de escritura. Se cambió la sesión a `jbrkll007`, se generó una clave SSH específica para esa cuenta, se agregó a GitHub y se configuró `core.sshCommand` en el repositorio local. El push por SSH funcionó.
 10. La revisión funcional real queda pendiente de AUTH-001, de la aprobación del stack y de la revisión de otro integrante.
+11. Se abrió el PR Draft #15 hacia `integration/auth-p0`, sin fusionarlo.
 
 ## Autoría y alcance
 
-Este prototipo se preparó en la rama `feat/auth-frontend-p0`. No se modificaron archivos de Backend, Base de Datos ni QA. La autoría real queda registrada en los commits y, cuando se publique, en el Pull Request; no se atribuye revisión ni aprobación a integrantes que no hayan participado.
+Este prototipo se preparó en la rama `feat/auth-frontend-p0`. No se modificaron archivos de Backend, Base de Datos ni QA. La autoría real queda registrada en los commits y en el PR #15; no se atribuye revisión ni aprobación a integrantes que no hayan participado.
