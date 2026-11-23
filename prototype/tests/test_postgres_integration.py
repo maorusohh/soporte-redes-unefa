@@ -98,7 +98,7 @@ def test_postgres_login_sessions_roles_and_restart(auth_postgres):
         assert a.status_code == b.status_code == 200
         assert administrator.get("/api/v1/admin/users").status_code == 200
         assert usuario.get("/api/v1/admin/users").status_code == 403
-        assert administrador.get("/api/v1/auth/me").json()["user"]["role"] == "ADMIN"
+        assert administrator.get("/api/v1/auth/me").json()["user"]["role"] == "ADMIN"
         assert usuario.get("/api/v1/auth/me").json()["user"]["role"] == "USER"
         # Rehacer el objeto del servidor no borra usuarios/sesiones PostgreSQL.
         with TestClient(create_app(auth_repository=PostgresAuthRepository(conninfo=url))) as restarted:
