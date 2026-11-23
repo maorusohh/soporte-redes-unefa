@@ -5,6 +5,10 @@ Los tests pueden inyectar un repositorio falso, sin simular persistencia real.
 """
 from __future__ import annotations
 
+import hashlib
+import hmac
+import secrets
+
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlsplit
 from uuid import UUID
@@ -37,6 +41,8 @@ from app.auth.security import (
 
 router = APIRouter(prefix="/api/v1", tags=["authentication"])
 COOKIE_NAME = "unefa_session"
+CSRF_COOKIE_NAME = "csrf_token"
+CSRF_HEADER_NAME = "X-CSRF-Token"
 SESSION_TTL = timedelta(hours=1)
 RESET_TTL = timedelta(minutes=15)
 
@@ -121,6 +127,43 @@ def require_admin(
     return account
 
 
+def csrf_for_session(session_token: str) -> str:
+    """Token CSRF ligado a una sesión aleatoria; sin secretos persistentes extras.
+
+    La cookie JS-readable expone SOLO un HMAC, no el token de sesión HttpOnly.
+    """
+    return hmac.new(
+        session_token.encode("utf-8"),
+        b"unefa-auth-p0-csrf-v1",
+        hashlib.sha256,
+    ).hexdigest()
+
+
+def require_session_csrf(
+    request: Request,
+    _account: AuthAccount = Depends(current_account),
+) -> None:
+    """Double-submit firmado con la cookie de sesión; solo mutaciones autenticadas.
+
+    Operaciones públicas (login/forgot/reset) conservan validación de origen.
+    """
+    session_token = request.cookies.get(COOKIE_NAME, "")
+    cookie_csrf = request.cookies.get(CSRF_COOKIE_NAME, "")
+    header_csrf = request.headers.get(CSRF_HEADER_NAME, "")
+    expected_csrf = csrf_for_session(session_token) if session_token else ""
+    if not (
+        cookie_csrf
+        and header_csrf
+        and expected_csrf
+        and secrets.compare_digest(cookie_csrf, header_csrf)
+        and secrets.compare_digest(header_csrf, expected_csrf)
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Token CSRF ausente o inválido.",
+        )
+
+
 class AdminResetRequest(BaseModel):
     user_id: UUID
 
@@ -147,6 +190,11 @@ def login(
         httponly=True, secure=request.url.scheme == "https",
         samesite="strict", max_age=int(SESSION_TTL.total_seconds()), path="/",
     )
+    response.set_cookie(
+        key=CSRF_COOKIE_NAME, value=csrf_for_session(token),
+        httponly=False, secure=request.url.scheme == "https",
+        samesite="strict", max_age=int(SESSION_TTL.total_seconds()), path="/",
+    )
     response.headers["Cache-Control"] = "no-store"
     return UserResponse(user=user_public(account))
 
@@ -156,7 +204,7 @@ def me(account: AuthAccount = Depends(current_account)) -> UserResponse:
     return UserResponse(user=user_public(account))
 
 
-@router.post("/auth/logout", status_code=204, dependencies=[Depends(require_same_origin)])
+@router.post("/auth/logout", status_code=204, dependencies=[Depends(require_same_origin), Depends(require_session_csrf)])
 def logout(
     request: Request,
     repo: AuthRepository = Depends(repository_for_request),
@@ -165,11 +213,12 @@ def logout(
     repo.revoke_session(token_hash(request.cookies[COOKIE_NAME]), now_utc())
     response = Response(status_code=204)
     response.delete_cookie(key=COOKIE_NAME, path="/", samesite="strict")
+    response.delete_cookie(key=CSRF_COOKIE_NAME, path="/", samesite="strict")
     response.headers["Cache-Control"] = "no-store"
     return response
 
 
-@router.post("/auth/change-password", status_code=204, dependencies=[Depends(require_same_origin)])
+@router.post("/auth/change-password", status_code=204, dependencies=[Depends(require_same_origin), Depends(require_session_csrf)])
 def change_password(
     payload: ChangePasswordRequest,
     account: AuthAccount = Depends(current_account),
@@ -224,7 +273,7 @@ def list_users(
     return {"users": [user_public(u).model_dump(mode="json") for u in repo.list_users()]}
 
 
-@router.post("/admin/users", status_code=201, dependencies=[Depends(require_same_origin)])
+@router.post("/admin/users", status_code=201, dependencies=[Depends(require_same_origin), Depends(require_session_csrf)])
 def create_user(
     payload: CreateUserRequest,
     _admin: AuthAccount = Depends(require_admin),
@@ -237,7 +286,7 @@ def create_user(
     return {"user": user_public(created).model_dump(mode="json")}
 
 
-@router.post("/admin/password-resets", status_code=201, dependencies=[Depends(require_same_origin)])
+@router.post("/admin/password-resets", status_code=201, dependencies=[Depends(require_same_origin), Depends(require_session_csrf)])
 def admin_password_reset(
     payload: AdminResetRequest,
     admin: AuthAccount = Depends(require_admin),
