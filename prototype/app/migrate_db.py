@@ -31,7 +31,7 @@ def migrate() -> None:
                 """
             )
             applied = {
-                row[0]
+                row["version"]
                 for row in conn.execute(
                     "SELECT version FROM auth_schema_migrations"
                 ).fetchall()
