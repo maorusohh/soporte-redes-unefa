@@ -5,6 +5,8 @@ from fastapi import FastAPI, status
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
+from app.auth.repository import AuthRepository
+from app.auth.router import router as auth_router
 from app.registry import DeviceRegistry
 
 
@@ -43,9 +45,14 @@ refresh();setInterval(refresh,2000);
 </script></body></html>"""
 
 
-def create_app(registry: DeviceRegistry | None = None) -> FastAPI:
+def create_app(
+    registry: DeviceRegistry | None = None,
+    auth_repository: AuthRepository | None = None,
+) -> FastAPI:
     state = registry if registry is not None else DeviceRegistry()
-    app = FastAPI(title="UNEFANB — POC Teleprocesos", version="0.1.0")
+    app = FastAPI(title="UNEFANB — POC Teleprocesos", version="0.2.0")
+    app.state.auth_repository = auth_repository
+    app.include_router(auth_router)
 
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)
     def dashboard() -> str:
