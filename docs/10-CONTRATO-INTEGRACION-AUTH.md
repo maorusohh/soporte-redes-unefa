@@ -53,3 +53,18 @@ Nota: `/api/v1` precede todas las rutas de la tabla. La estructura de errores us
 ## Gestión de cambios del contrato
 
 Un cambio en nombre de ruta, JSON, rol, esquema de identidad o significado de error requiere aviso a los cuatro integrantes en Issue/PR. Nunca cambiar solamente una parte. Las propuestas de cada IA deben someterse a este mismo contrato y revisiones humanas.
+
+
+## Acuerdo técnico CSRF entre Backend y Frontend — 23/11/2026
+
+**Implementado en Backend PR #14; probado de forma aislada con un repositorio de tests, todavía sin prueba E2E React + FastAPI ni PostgreSQL.**
+
+- `POST /api/v1/auth/login` (con credenciales válidas) devuelve dos cookies del mismo origen: `unefa_session` (HttpOnly, SameSite=Strict) y `csrf_token` (legible por JavaScript, SameSite=Strict). Ambas tienen duración alineada a la sesión; se aplica `Secure` cuando hay HTTPS. **No usar credenciales reales en HTTP de LAN.**
+- El Backend deriva el valor de `csrf_token` usando HMAC-SHA256 ligado al token de sesión aleatorio; **no expone el token de sesión HttpOnly a JavaScript**. La API compara de forma constante la cookie CSRF, la cabecera `X-CSRF-Token` y el valor derivado.
+- En `POST /api/v1/auth/logout`, `POST /api/v1/auth/change-password`, `POST /api/v1/admin/users` y `POST /api/v1/admin/password-resets` **se exige** sesión autenticada, validación de origen y CSRF correcto. La autorización ADMIN continúa en el servidor.
+- Las operaciones públicas `login`, `forgot-password` y `reset-password` no requieren una sesión previa; conservan control `Origin/Referer` del mismo origen. No deben exponerse a otros orígenes con CORS permisivo.
+- En logout y cambio de contraseña, la API elimina las cookies de sesión y CSRF. El almacenamiento persistente de sesión aún debe ser aportado por PostgreSQL.
+- El `client.js` de Joiber en PR #15 ya utiliza por defecto `csrf_token` y `X-CSRF-Token` en operaciones mutantes. **No se requiere cambiar esos nombres en Frontend.** Debe probarse el flujo real y corregirse la validación de URL `//otro-host` antes del merge.
+- Tests del Backend: sesión válida con/sin token, cookie/cabecera incorrectas, token de otra sesión, revocación y comprobación de permisos. GitHub Actions run `45114971828`: **25 passed, 1 warning** en tests Python (no incluye compilación React ni integración PostgreSQL).
+
+**Alcance de seguridad:** protección inicial razonable para la aplicación académica, no auditoría de producción. Quedan pendientes límites de intentos, validación HTTPS/TLS para datos reales, proxy/Host, pruebas E2E y cualquier ajuste surgido al conectar la persistencia.
