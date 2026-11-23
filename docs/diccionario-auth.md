@@ -95,10 +95,43 @@ Registra las solicitudes de recuperación de contraseña.
 
 ## 7. Relaciones entre tablas
 
-- `auth_sessions.user_id` referencia `users.id`.
-- `password_reset_tokens.user_id` referencia `users.id`.
-- `password_reset_tokens.created_by_admin_id` referencia `users.id`.
-- `recovery_requests.user_id` referencia `users.id`.
+La tabla `users` es la entidad principal del modelo. Las demás tablas se relacionan con ella mediante claves foráneas.
+
+### 7.1 Relación users - auth_sessions
+
+- Clave primaria: `users.id`.
+- Clave foránea: `auth_sessions.user_id`.
+- Cardinalidad: uno a muchos (1:N).
+- Descripción: un usuario puede tener varias sesiones de autenticación, pero cada sesión pertenece a un solo usuario.
+
+### 7.2 Relación users - password_reset_tokens
+
+- Clave primaria: `users.id`.
+- Clave foránea: `password_reset_tokens.user_id`.
+- Cardinalidad: uno a muchos (1:N).
+- Descripción: un usuario puede tener varios registros de códigos de recuperación a lo largo del tiempo. Cada código pertenece a un solo usuario.
+
+### 7.3 Relación users - password_reset_tokens (administrador emisor)
+
+- Clave primaria: `users.id`.
+- Clave foránea: `password_reset_tokens.created_by_admin_id`.
+- Cardinalidad: uno a muchos (1:N).
+- Descripción: un administrador puede emitir varios códigos de recuperación. Cada registro identifica al administrador que emitió el código.
+- Regla: Backend debe comprobar que el usuario emisor tenga el rol `ADMIN`.
+
+### 7.4 Relación users - recovery_requests
+
+- Clave primaria: `users.id`.
+- Clave foránea: `recovery_requests.user_id`.
+- Cardinalidad: uno a muchos (1:N).
+- Descripción: un usuario puede generar varias solicitudes de recuperación. Cada solicitud pertenece a un solo usuario.
+
+### 7.5 Integridad referencial
+
+- Todas las claves foráneas deben apuntar a registros existentes en `users`.
+- No se deben crear sesiones, códigos o solicitudes asociados a usuarios inexistentes.
+- La desactivación de una cuenta debe conservar los registros históricos.
+- Se propone utilizar `ON DELETE RESTRICT` para evitar eliminar accidentalmente usuarios que tengan registros relacionados. Esta decisión queda pendiente de validación con Backend y el equipo.
 
 ## 8. Reglas de seguridad y persistencia
 
