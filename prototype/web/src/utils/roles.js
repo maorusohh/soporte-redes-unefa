@@ -10,7 +10,7 @@ export function roleLabel(role) {
 
 export function roleDescription(role) {
   if (role === "ADMIN") {
-    return "Como ADMIN puedes consultar la lista de usuarios autorizados. Las operaciones de escritura siguen pendientes en Backend.";
+    return "Como ADMIN puedes consultar cuentas, crear usuarios autorizados y emitir códigos temporales de recuperación. El servidor valida el rol en cada operación; ocultar o mostrar botones no sustituye ese control.";
   }
   return "Tu rol no incluye la gestión de usuarios. Las acciones administrativas no se muestran y el servidor también debe rechazarlas.";
 }

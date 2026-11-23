@@ -203,7 +203,19 @@ input {
   font: inherit;
 }
 
-input:focus {
+select {
+  width: 100%;
+  min-width: 10rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #b9c5d6;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+input:focus,
+select:focus {
   border-color: var(--primary);
   outline: 3px solid rgba(36, 87, 166, 0.22);
 }
@@ -282,6 +294,35 @@ h2[tabindex="-1"]:focus {
 .button--danger:hover {
   background: #f7dbd8;
   color: #7d281f;
+}
+
+.button--small {
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.admin-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, auto) auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.admin-form .field {
+  margin-bottom: 0;
+}
+
+.secret-code {
+  display: inline-block;
+  margin: 0.35rem 0;
+  padding: 0.35rem 0.55rem;
+  border: 1px dashed #b7791f;
+  background: #fff;
+  color: #4a3308;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  overflow-wrap: anywhere;
 }
 
 .button-row {
@@ -441,6 +482,10 @@ code {
   }
 
   .page--narrow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-form {
     grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -5,11 +5,78 @@
  * - Rutas bajo /api/v1 en el mismo origen.
  * - La cookie de sesión es HttpOnly y la administra el navegador.
  * - No se guardan credenciales ni tokens en localStorage/sessionStorage.
- * - El mecanismo CSRF definitivo sigue pendiente en Backend.
+ * - El mecanismo CSRF definitivo sigue pendiente en Backend. Mientras se
+ *   acuerda, el cliente aplica el patrón double-submit cookie: lee el token
+ *   de una cookie legible por JavaScript y lo envía en una cabecera para las
+ *   operaciones mutantes. Los nombres son configurables y deben confirmarse
+ *   con Backend antes de la integración real.
  */
 
-const API_BASE =
-  (import.meta.env && import.meta.env.VITE_API_BASE) || "/api/v1";
+const DEFAULT_API_BASE = "/api/v1";
+const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+const env = (import.meta && import.meta.env) || {};
+
+let warnedAboutBase = false;
+
+function normalizeApiBase(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) {
+    return DEFAULT_API_BASE;
+  }
+  return trimmed.replace(/\/+$/, "") || DEFAULT_API_BASE;
+}
+
+/**
+ * Solo se acepta una ruta relativa del mismo origen. Una URL absoluta se
+ * acepta únicamente si coincide con el origen actual; en ese caso se usa su
+ * ruta. Una URL externa se descarta con una advertencia para no romper la
+ * política de cookies de sesión del contrato.
+ */
+export function resolveApiBase(rawValue, currentOrigin) {
+  if (!rawValue) {
+    return DEFAULT_API_BASE;
+  }
+
+  const value = String(rawValue).trim();
+  if (!value) {
+    return DEFAULT_API_BASE;
+  }
+
+  if (value.startsWith("/")) {
+    return normalizeApiBase(value);
+  }
+
+  if (currentOrigin) {
+    try {
+      const url = new URL(value, currentOrigin);
+      if (url.origin === currentOrigin) {
+        return normalizeApiBase(url.pathname);
+      }
+    } catch {
+      // Se descarta abajo.
+    }
+  }
+
+  if (!warnedAboutBase) {
+    warnedAboutBase = true;
+    console.warn(
+      "[api] VITE_API_BASE debe ser del mismo origen. Se usará /api/v1."
+    );
+  }
+  return DEFAULT_API_BASE;
+}
+
+export const apiBase = resolveApiBase(
+  env.VITE_API_BASE,
+  typeof window !== "undefined" ? window.location.origin : undefined
+);
+
+const CSRF_COOKIE = String(env.VITE_CSRF_COOKIE || "csrf_token").trim();
+const CSRF_HEADER = String(env.VITE_CSRF_HEADER || "X-CSRF-Token").trim();
+const CSRF_META = String(env.VITE_CSRF_META || "csrf-token").trim();
+
+let csrfTokenMemory = "";
 
 export class ApiError extends Error {
   constructor(status, detail, payload) {
@@ -28,9 +95,57 @@ function extractDetail(payload) {
   return "";
 }
 
+function readCookie(name) {
+  if (typeof document === "undefined" || !document.cookie) {
+    return "";
+  }
+
+  for (const part of document.cookie.split(";")) {
+    const entry = part.trim();
+    const separator = entry.indexOf("=");
+    if (separator === -1) {
+      continue;
+    }
+    if (entry.slice(0, separator) === name) {
+      return decodeURIComponent(entry.slice(separator + 1));
+    }
+  }
+  return "";
+}
+
+function readMetaToken() {
+  if (typeof document === "undefined" || !CSRF_META) {
+    return "";
+  }
+
+  const meta = Array.from(document.querySelectorAll("meta")).find(
+    (item) => item.getAttribute("name") === CSRF_META
+  );
+  return meta?.getAttribute("content")?.trim() || "";
+}
+
+/**
+ * El backend puede publicar el token en una cookie legible, en una etiqueta
+ * meta o en la cabecera de una respuesta. La cookie es la fuente más reciente
+ * cuando existe; el valor recordado se usa si Backend solo devuelve cabecera.
+ */
+export function getCsrfToken() {
+  return readCookie(CSRF_COOKIE) || readMetaToken() || csrfTokenMemory;
+}
+
+/** Uso interno y pruebas: registra un token devuelto por Backend. */
+export function setCsrfToken(token) {
+  csrfTokenMemory = typeof token === "string" ? token.trim() : "";
+}
+
+export function clearCsrfToken() {
+  csrfTokenMemory = "";
+}
+
 async function request(path, options = {}) {
+  const method = String(options.method || "GET").toUpperCase();
   const init = {
-    method: options.method || "GET",
+    method,
     credentials: "same-origin",
     cache: "no-store",
     headers: { Accept: "application/json" }
@@ -41,11 +156,23 @@ async function request(path, options = {}) {
     init.body = JSON.stringify(options.body);
   }
 
+  if (MUTATING_METHODS.has(method)) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      init.headers[CSRF_HEADER] = csrfToken;
+    }
+  }
+
   let response;
   try {
-    response = await fetch(API_BASE + path, init);
+    response = await fetch(apiBase + path, init);
   } catch {
     throw new ApiError(0, "", null);
+  }
+
+  const issuedToken = response.headers.get(CSRF_HEADER);
+  if (issuedToken) {
+    setCsrfToken(issuedToken);
   }
 
   let payload = null;
@@ -134,5 +261,19 @@ export const authApi = {
 
   listUsers() {
     return request("/admin/users");
+  },
+
+  createUser(email, role) {
+    return request("/admin/users", {
+      method: "POST",
+      body: { email, role }
+    });
+  },
+
+  requestPasswordReset(userId) {
+    return request("/admin/password-resets", {
+      method: "POST",
+      body: { user_id: userId }
+    });
   }
 };
