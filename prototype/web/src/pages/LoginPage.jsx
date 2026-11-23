@@ -68,7 +68,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="page">
+    <div className="page page--narrow">
       <section className="card" aria-labelledby="login-title">
         <p className="eyebrow">Autenticación P0</p>
         <h1 id="login-title">Iniciar sesión</h1>
@@ -143,25 +143,6 @@ export default function LoginPage() {
           <Link to="/recover">¿Olvidaste tu contraseña?</Link>
         </p>
       </section>
-
-      <aside className="card" aria-labelledby="login-status-title">
-        <h2 id="login-status-title">Estado de esta entrega</h2>
-        <p>
-          Estas vistas usan React + Vite y el contrato HTTP/JSON de{" "}
-          <code>/api/v1</code> del documento 10. No hay usuarios ni contraseñas
-          escritos en el código.
-        </p>
-        <p>
-          El inicio de sesión real depende de los endpoints de AUTH-001.
-          Mientras no estén disponibles, la pantalla mostrará un error de
-          conexión o de ruta, no un acceso simulado.
-        </p>
-        <ul className="list-plain">
-          <li>La sesión se apoya en una cookie HttpOnly administrada por el navegador.</li>
-          <li>No se guardan credenciales ni tokens en <code>localStorage</code>.</li>
-          <li>Los permisos definitivos se aplican en Backend, no solo ocultando botones.</li>
-        </ul>
-      </aside>
     </div>
   );
 }

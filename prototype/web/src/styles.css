@@ -447,15 +447,6 @@ code {
   font-size: 0.9em;
 }
 
-.list-plain {
-  margin: 0.5rem 0 0;
-  padding-left: 1.2rem;
-}
-
-.list-plain li {
-  margin: 0.35rem 0;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;

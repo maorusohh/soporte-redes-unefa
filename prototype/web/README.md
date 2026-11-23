@@ -254,7 +254,7 @@ Se registran aquí únicamente comprobaciones realizadas.
 | 22/11/2026 | Navegación y estados de error sin API | Playwright + Chromium headless sobre build de producción | OK; formularios, avisos, navegación activa y almacenamiento vacío; sin errores de página |
 | 22/11/2026 | Flujos contra un mock Node del contrato | Playwright: login USER/ADMIN, `/auth/me`, 403 de USER en `/admin/users`, lista ADMIN, logout, cambio de contraseña, contraseña anterior rechazada, recuperación, código inválido y reutilizado | OK; **no es integración real con Backend** |
 | 23/11/2026 | Pruebas automatizadas del Frontend | `npm test` (Vitest 5 + Testing Library + jsdom) | **40 pruebas aprobadas**; cliente, CSRF, validación/reducer de sesión, carrera de `AuthProvider`, administración de `SessionPage` y mock del contrato |
-| 23/11/2026 | Build de producción | `npm run build` | OK; Vite 8.3.8, 36 módulos; JS ~290,6 KB (90,4 KB gzip), CSS ~6,1 KB (2,1 KB gzip) |
+| 23/11/2026 | Build de producción | `npm run build` | OK; Vite 8.3.8, 36 módulos; JS ~289,7 KB (90,1 KB gzip), CSS ~6,0 KB (2,0 KB gzip) |
 | 23/11/2026 | Mock versionado del contrato | `npm run mock` y `curl` a `/api/v1/auth/login` con ADMIN sintético | HTTP 200, usuario ADMIN y cookies `session_id`/`csrf_token`; **simulación local, no Backend** |
 | 22/11/2026 | Login real contra `/api/v1/auth/login` | Backend/AUTH-001 | **NO EJECUTADO**: endpoint no disponible en el PR #14 |
 | 22/11/2026 | Pruebas con PostgreSQL, cookies del Backend real y CSRF definitivo | Requiere integración | **NO EJECUTADO** |
