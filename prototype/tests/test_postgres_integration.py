@@ -140,3 +140,49 @@ def test_postgres_rejects_duplicate_and_normalizes_email(auth_postgres):
     with pytest.raises(DuplicateEmailError):
         repository.create_user("USER@example.com", UserRole.USER)
     assert repository.find_user_by_email("USER@example.com").email == "user@example.com"
+
+
+def test_migrate_and_bootstrap_admin_reproducible(auth_postgres, monkeypatch):
+    """Prueba comandos CLI completos en un segundo schema de prueba independiente."""
+    from app import bootstrap_admin, migrate_db
+    url = os.getenv("AUTH_TEST_DATABASE_URL")
+    schema = "test_cli_" + uuid4().hex
+    with psycopg.connect(url, autocommit=True) as conn:
+        conn.execute(sql.SQL("CREATE SCHEMA {}").format(sql.Identifier(schema)))
+    scoped = make_conninfo(url, options=f"-c search_path={schema}")
+    repository = PostgresAuthRepository(conninfo=scoped)
+    try:
+        monkeypatch.setattr(
+            migrate_db, "interactive_postgres_repository", lambda: repository
+        )
+        migrate_db.migrate()
+        migrate_db.migrate()
+        with psycopg.connect(scoped) as conn:
+            rows = conn.execute(
+                "SELECT version FROM auth_schema_migrations ORDER BY version"
+            ).fetchall()
+            assert [r[0] for r in rows] == [
+                "001_create_auth_tables.sql",
+                "002_enforce_normalized_email.sql"
+            ]
+        monkeypatch.setattr(
+            bootstrap_admin, "interactive_postgres_repository",
+            lambda: repository
+        )
+        monkeypatch.setattr(
+            "builtins.input", lambda _prompt: "admin@example.com"
+        )
+        monkeypatch.setattr(
+            "getpass.getpass", lambda _prompt: "ClaveDeLaboratorio2026!"
+        )
+        bootstrap_admin.bootstrap_admin()
+        bootstrap_admin.bootstrap_admin()
+        users = repository.list_users()
+        assert len(users) == 1
+        assert users[0].role == UserRole.ADMIN
+        assert users[0].password_hash.startswith("$argon2")
+    finally:
+        with psycopg.connect(url, autocommit=True) as conn:
+            conn.execute(
+                sql.SQL("DROP SCHEMA {} CASCADE").format(sql.Identifier(schema))
+            )
