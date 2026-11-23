@@ -118,6 +118,13 @@ class FakeAuthRepository:
             return True
 
 
+
+def csrf_headers(client):
+    """Emular la cabecera enviada por el cliente React usando la cookie de CSRF."""
+    csrf = client.cookies.get("csrf_token")
+    return {**ORIGIN, **({"X-CSRF-Token": csrf} if csrf else {})}
+
+
 def make_app():
     fake = FakeAuthRepository()
     admin = fake.add_seed_user("admin@example.com", UserRole.ADMIN, ADMIN_PASSWORD)
@@ -128,7 +135,7 @@ def make_app():
 def login(client, email, password):
     return client.post("/api/v1/auth/login",
                        json={"email": email, "password": password},
-                       headers=ORIGIN)
+                       headers=csrf_headers(client))
 
 
 def test_auth_without_database_does_not_offer_fake_login():
@@ -150,7 +157,7 @@ def test_admin_login_me_and_logout_with_http_cookie():
         assert "samesite=strict" in result.headers["set-cookie"].lower()
         assert client.get("/api/v1/auth/me").json()["user"]["email"] == "admin@example.com"
         assert client.get("/api/v1/admin/users").status_code == 200
-        assert client.post("/api/v1/auth/logout", headers=ORIGIN).status_code == 204
+        assert client.post("/api/v1/auth/logout", headers=csrf_headers(client)).status_code == 204
         assert client.get("/api/v1/auth/me").status_code == 401
 
 
@@ -162,7 +169,7 @@ def test_user_cannot_access_admin_even_with_direct_request():
         assert client.post(
             "/api/v1/admin/users",
             json={"email":"another@example.com", "role":"ADMIN"},
-            headers=ORIGIN
+            headers=csrf_headers(client)
         ).status_code == 403
 
 
@@ -184,7 +191,7 @@ def test_mutations_reject_foreign_and_missing_origin():
             "/api/v1/auth/login", json=params,
             headers={"Origin": "https://example.com"}
         ).status_code == 403
-        assert client.post("/api/v1/auth/login", json=params, headers=ORIGIN).status_code == 200
+        assert client.post("/api/v1/auth/login", json=params, headers=csrf_headers(client)).status_code == 200
 
 
 def test_password_change_revokes_all_sessions():
@@ -195,7 +202,7 @@ def test_password_change_revokes_all_sessions():
         changed = first.post(
             "/api/v1/auth/change-password",
             json={"current_password": USER_PASSWORD, "new_password": "NuevaContrasena2026!"},
-            headers=ORIGIN
+            headers=csrf_headers(first)
         )
         assert changed.status_code == 204
         assert first.get("/api/v1/auth/me").status_code == 401
@@ -211,14 +218,14 @@ def test_admin_creates_account_and_issues_one_time_reset():
         created = client.post(
             "/api/v1/admin/users",
             json={"email": "new@example.com", "role": "USER"},
-            headers=ORIGIN
+            headers=csrf_headers(client)
         )
         assert created.status_code == 201
         user_id = created.json()["user"]["id"]
         assert login(client, "new@example.com", "NuevaContrasena2026!").status_code == 401
         reset = client.post(
             "/api/v1/admin/password-resets",
-            json={"user_id": user_id}, headers=ORIGIN
+            json={"user_id": user_id}, headers=csrf_headers(client)
         )
         assert reset.status_code == 201
         code = reset.json()["code"]
@@ -229,12 +236,12 @@ def test_admin_creates_account_and_issues_one_time_reset():
                 "email": "new@example.com",
                 "code": code,
                 "new_password": "NuevaContrasena2026!"
-            }, headers=ORIGIN
+            }, headers=csrf_headers(client)
         ).status_code == 204
         assert client.post(
             "/api/v1/auth/reset-password",
             json={"email": "new@example.com", "code": code, "new_password": "OtraContrasena2026!"},
-            headers=ORIGIN
+            headers=csrf_headers(client)
         ).status_code == 400
         assert login(client, "new@example.com", "NuevaContrasena2026!").status_code == 200
         assert store.find_user_by_email("new@example.com").password_hash is not None
@@ -245,11 +252,11 @@ def test_forgot_password_response_does_not_reveal_account():
     with TestClient(app) as client:
         known = client.post(
             "/api/v1/auth/forgot-password",
-            json={"email":"user@example.com"}, headers=ORIGIN
+            json={"email":"user@example.com"}, headers=csrf_headers(client)
         )
         unknown = client.post(
             "/api/v1/auth/forgot-password",
-            json={"email":"missing@example.com"}, headers=ORIGIN
+            json={"email":"missing@example.com"}, headers=csrf_headers(client)
         )
         assert known.status_code == unknown.status_code == 202
         assert known.json() == unknown.json()
@@ -263,3 +270,39 @@ def test_existing_heartbeat_remains_usable_with_auth_router():
             "/api/v1/heartbeats", json={"device_id":"PC-LAB-01"}
         ).status_code == 202
         assert client.get("/api/v1/devices").json()["total"] == 1
+
+
+def test_csrf_header_is_required_for_authenticated_mutations():
+    app, _, _, _ = make_app()
+    with TestClient(app) as client:
+        response = login(client, "admin@example.com", ADMIN_PASSWORD)
+        assert response.status_code == 200
+        assert client.cookies.get("csrf_token")
+        assert client.post("/api/v1/auth/logout", headers=ORIGIN).status_code == 403
+        assert client.post(
+            "/api/v1/auth/logout",
+            headers={**ORIGIN, "X-CSRF-Token": "token-incorrecto"}
+        ).status_code == 403
+        assert client.get("/api/v1/auth/me").status_code == 200
+        assert client.post(
+            "/api/v1/auth/logout", headers=csrf_headers(client)
+        ).status_code == 204
+        assert client.cookies.get("csrf_token") is None
+
+
+def test_csrf_of_another_session_is_rejected():
+    app, _, _, _ = make_app()
+    with TestClient(app) as first, TestClient(app) as second:
+        assert login(first, "admin@example.com", ADMIN_PASSWORD).status_code == 200
+        assert login(second, "admin@example.com", ADMIN_PASSWORD).status_code == 200
+        token_first = first.cookies.get("csrf_token")
+        token_second = second.cookies.get("csrf_token")
+        assert token_first and token_second and token_first != token_second
+        assert second.post(
+            "/api/v1/auth/logout",
+            headers={**ORIGIN, "X-CSRF-Token": token_first}
+        ).status_code == 403
+        assert second.get("/api/v1/auth/me").status_code == 200
+        assert second.post(
+            "/api/v1/auth/logout", headers=csrf_headers(second)
+        ).status_code == 204
