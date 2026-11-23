@@ -21,13 +21,18 @@ La UNEFANB, Extensión Santa Teresa del Tuy, es una referencia académica; no es
 - Conserva el contexto duradero en la documentación y en la Issue o PR correspondiente; no dependas de la memoria de una conversación. No incluyas conversaciones privadas completas.
 - Redacta las explicaciones en español. Conserva nombres técnicos en inglés cuando corresponda.
 
-## Límites de la etapa actual
+## Etapa actual — AUTH-P0 (vigente desde 21–23/11/2026)
 
-- Esta etapa prepara documentación y organización. No implementes login, frontend, backend, base de datos ni pruebas funcionales sin una tarea posterior explícita.
-- No selecciones ni instales un stack definitivo por iniciativa propia. Lenguajes, frameworks, motor de base de datos, formato de mensajes y mecanismos de monitoreo siguen pendientes.
-- Los cuatro roles están definidos como áreas de trabajo, pero las personas siguen sin asignación. No inventes nombres, responsables ni disponibilidad.
-- La presentación final está prevista para febrero de 2027, pendiente de confirmación formal. No la presentes como fecha oficial ni inventes un día.
-- Conserva el README existente en esta tarea. Cualquier cambio posterior requiere su propia tarea verificable.
+La sección anterior que limitaba este repositorio a preparación documental **correspondía al primer PR de fundación** y quedó superada por las tareas técnicas aprobadas posteriormente. **No debe aplicarse como prohibición global** frente a Issues explícitas posteriores.
+
+- **Alcance actual de trabajo:** implementar y comprobar autenticación por roles, sesiones, cambio/recuperación de contraseña, Backend FastAPI, Frontend React/Vite y PostgreSQL; se conservan las pruebas del heartbeat de Teleprocesos.
+- **Tareas autorizadas:** [Backend #9](https://github.com/maorusohh/soporte-redes-unefa/issues/9), [Frontend #10](https://github.com/maorusohh/soporte-redes-unefa/issues/10), [BD #11](https://github.com/maorusohh/soporte-redes-unefa/issues/11), [QA #12](https://github.com/maorusohh/soporte-redes-unefa/issues/12), y las documentales específicas, como Capítulo 2 #16.
+- **Contratos y criterios:** [docs/07](docs/07-ALCANCE-Y-REQUISITOS.md), [docs/10](docs/10-CONTRATO-INTEGRACION-AUTH.md), [docs/11](docs/11-GUIA-COLABORACION-PRACTICA.md), y el [contrato de persistencia de Backend](https://github.com/maorusohh/soporte-redes-unefa/blob/feat/auth-backend-p0/docs/12-CONTRATO-PERSISTENCIA-AUTH.md). Distinguir propuestas aún por validar de decisiones confirmadas.
+- **Ramas ya creadas:** `feat/auth-backend-p0`, `feat/auth-frontend-p0`, `feat/auth-database-p0` y `test/auth-qa-p0`. No duplicarlas. Cada integrante trabaja en su rama, publica PR hacia **`integration/auth-p0`**, y **no fusiona** sin revisión y autorización humana. Integración final hacia `main` solo después de revisar los PRs base en orden.
+- **Asignación comunicada:** Mauricio Backend/integración, Joiber Frontend, Yosward BD, Nessler QA y documentación académica de la Issue #16. Los hechos documentados y las pruebas verificables prevalecen sobre afirmaciones de avance.
+- **Arquitectura propuesta:** una laptop anfitriona con FastAPI y PostgreSQL; navegadores cliente acceden por LAN privada autorizada. Datos ficticios y equipos propios del grupo. La simulación local en memoria no constituye persistencia PostgreSQL ni autenticación productiva.
+
+Los requisitos nuevos deben quedar en la Issue pertinente y no pueden ampliar el alcance silenciosamente. La presentación académica y sus fechas oficiales requieren confirmación; no inventar plazos.
 
 ## Seguridad y evidencia
 
@@ -36,4 +41,4 @@ La UNEFANB, Extensión Santa Teresa del Tuy, es una referencia académica; no es
 - No subas credenciales, tokens, contraseñas, archivos de configuración con secretos, datos personales ni registros sensibles. Usa datos sintéticos y ejemplos sin valores reales; no pidas secretos en el chat.
 - No inventes implementaciones, comandos ejecutados, resultados, capturas, cobertura ni pruebas aprobadas. Distingue lo propuesto, lo implementado, lo ejecutado y lo verificado.
 - Para cambios documentales revisa contenido, enlaces, coherencia y diff. No presentes esa revisión como una prueba funcional de una aplicación.
-- Trabaja en una branch por tarea y prepara un PR hacia `main`. No hagas push directo a `main`, no uses force push ni fusiones un PR automáticamente. Un bloqueo de permisos debe informarse; no justifica omitir las verificaciones restantes.
+- Trabaja en tu rama individual de AUTH-P0 y prepara un PR hacia `integration/auth-p0` (luego integración revisada hacia `main`). No hagas push directo a `main`, no uses force push ni fusiones un PR automáticamente. Un bloqueo de permisos debe informarse; no justifica omitir las verificaciones restantes.
