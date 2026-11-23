@@ -38,6 +38,9 @@ def test_demo_roles_and_logout(tmp_path):
         assert admin.get("/api/v1/admin/users").status_code == 200
         assert user.get("/api/v1/admin/users").status_code == 403
         assert user.post(
-            "/api/v1/auth/logout", headers={"Origin": "http://testserver"}
+            "/api/v1/auth/logout", headers={
+                "Origin": "http://testserver",
+                "X-CSRF-Token": user.cookies.get("csrf_token"),
+            }
         ).status_code == 204
         assert user.get("/api/v1/auth/me").status_code == 401
