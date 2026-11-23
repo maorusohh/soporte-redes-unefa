@@ -235,6 +235,7 @@ def change_password(
     )
     response = Response(status_code=204)
     response.delete_cookie(key=COOKIE_NAME, path="/", samesite="strict")
+    response.delete_cookie(key=CSRF_COOKIE_NAME, path="/", samesite="strict")
     response.headers["Cache-Control"] = "no-store"
     return response
 
