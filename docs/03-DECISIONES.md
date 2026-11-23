@@ -42,3 +42,12 @@ Fuente de todas las entradas de esta tabla: encargo del usuario de preparar la e
 | DEC-16 | Pendiente | Recursos de la LAN y guion final de demostración. | Inventario propio, permisos de propietarios y requisitos de evaluación confirmados. |
 
 Al resolver un pendiente, registrar tarea o PR, fuente, fecha real disponible y motivo. Si no hay evidencia, mantenerlo pendiente y explicar qué información falta.
+
+
+## Actualización técnica de Frontend — 22/11/2026
+
+| ID | Estado | Decisión acotada | Justificación y condiciones |
+| --- | --- | --- | --- |
+| DEC-17 | **Aceptada técnicamente para integración, sin merge ni validación final del equipo** | Mantener **Vite 8 + React 19 + React Router 7** en `prototype/web/`, según [PR #15](https://github.com/maorusohh/soporte-redes-unefa/pull/15), sin exigir reescritura a HTML estático. | Decisión de coordinación técnica delegada por Mauricio al solicitar conservar el diseño si es correcto/mantenible. Componentes y rutas reutilizables, build estático para servirlo con FastAPI en LAN, costo cero de hosting y compatibilidad de 7 endpoints con el contrato de [docs/10](10-CONTRATO-INTEGRACION-AUTH.md). Node.js de desarrollo conforme a requisitos de Vite. **Pendientes antes del merge:** CI para `npm ci && npm run build`, integración real con FastAPI/PostgreSQL, seguridad de cookies/CSRF, preservación de la POC heartbeat, política de formularios ADMIN y revisión cruzada. La decisión no resuelve automáticamente el pendiente global DEC-11 de stack ni constituye aprobación de la profesora. |
+
+**Evidencia de revisión:** [Review técnica del PR #15](https://github.com/maorusohh/soporte-redes-unefa/pull/15). El PR #15 es Draft y sus pruebas de UI con mock Node, descritas por Joiber, **no** son una prueba de login real. GitHub Actions del commit `885f1c00ff9c18d3ec4d47498aa01037d8878fda` solo ejecutó la suite Python (`5 passed, 1 warning`) y no el build frontend.
