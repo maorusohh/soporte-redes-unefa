@@ -57,3 +57,12 @@ Conexiones PostgreSQL con usuario de mínimo privilegio, variables de entorno, c
 6. QA valida pruebas reales y distingue pruebas con Fake de pruebas de BD.
 
 **Evidencia disponible al 22/11/2026:** GitHub Actions ejecutó `20 passed, 1 warning` en el Backend (5 pruebas heartbeat, 6 de núcleo y 9 HTTP con Fake). Esto **no certifica PostgreSQL ni login final en LAN**.
+
+
+## Coordinación CSRF ya implementada en Backend — 23/11/2026
+
+La implementación de `app/auth/router.py` añadió cookies `unefa_session` (HttpOnly) y `csrf_token` (legible por JavaScript), ambas `SameSite=Strict` y con `Secure` bajo HTTPS. El valor CSRF está vinculado criptográficamente al token aleatorio de sesión usando HMAC-SHA256. Los POST autenticados de logout, cambio de contraseña y administración verifican cookie + cabecera `X-CSRF-Token` + origen; se limpian las cookies tras revocación. Las rutas públicas continúan con verificación de origen.
+
+El nombre de cookie/cabecera coincide con los valores por defecto de `prototype/web/src/api/client.js` en PR #15. **No requiere cambios de ruta JSON ni de esquema SQL**; la persistencia de sesiones sigue delegada al adaptador PostgreSQL. En `docs/10` figura el contrato actualizado de integración y su alcance.
+
+**Evidencia aislada** GitHub Actions run `45114971828`: 25 tests Python aprobados y un warning, incluyendo rechazos CSRF por token ausente/incorrecto/de otra sesión. **Pendiente:** pruebas de React contra FastAPI y PostgreSQL real; no significa que el login ya esté operativo con almacenamiento persistente.
